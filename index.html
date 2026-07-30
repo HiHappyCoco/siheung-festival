@@ -145,7 +145,12 @@ h2.sec:first-child{margin-top:0}
 .booth .bc{font-size:12.5px;color:var(--ink-soft);margin-bottom:7px}
 .booth p{font-size:13.5px}
 .booth .num{display:inline-flex;width:20px;height:20px;background:var(--blue);color:#fff;border-radius:50%;font-size:12px;align-items:center;justify-content:center;margin-right:6px;font-weight:700}
-.bdot{cursor:pointer}
+.booth{cursor:pointer}
+.booth:hover{box-shadow:0 4px 14px rgba(27,95,170,.12)}
+.gal-head{font-size:15px;font-weight:700;color:var(--blue-deep);margin-bottom:9px}
+.gal-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.gal-row img{height:190px;border-radius:10px;flex:0 0 auto}
+.gal-empty{font-size:13.5px;color:var(--ink-soft);padding:22px 0;text-align:center}
 
 /* ── 관리자 ───────────────────────── */
 .adm-gate{background:var(--paper);border:1px solid var(--sky-line);border-radius:14px;padding:26px;text-align:center}
@@ -706,37 +711,13 @@ async function delCmt(postId,idx){
   }catch(e){alert('댓글 삭제에 실패했습니다: '+e.message);}
 }
 
-/* ═══════════ 부스 (신청·승인 워크플로우) ═══════════ */
-let unsubBooth=null, boothDbCache=[];
+/* ═══════════ 부스 (사진 갤러리 + 신청·승인) ═══════════ */
+let unsubBooth=null, boothAll=[], selectedBooth=null;
 const BOOTH_CATS=['먹거리','체험','판매','공연','홍보','기타'];
 function renderBooth(){
-  const seeds=BOOTHS[curId]||[];
-  const f=FESTIVALS.find(x=>x.id===curId);
-  const mapSvg = (f&&f.hasBoothMap&&seeds.length) ? `
-  <div class="booth-map">
-    <svg viewBox="0 0 620 270" width="100%" style="max-height:300px">
-      <rect width="620" height="270" rx="12" fill="#F2F7FC"/>
-      <path d="M-10 235 C 120 200, 240 260, 380 225 S 560 250, 640 220 L 640 280 L -10 280 Z" fill="#CFE0F2"/>
-      <text x="500" y="252" font-size="12" fill="#5A6B80">갯골 수로</text>
-      <rect x="100" y="70" width="180" height="130" rx="10" fill="#DCEBDC" stroke="#B9D6B9"/>
-      <text x="118" y="92" font-size="13" fill="#4A6B4A" font-weight="700">잔디마당</text>
-      <rect x="330" y="60" width="200" height="90" rx="10" fill="#F0E6D6" stroke="#DCC9A8"/>
-      <text x="348" y="82" font-size="13" fill="#8A6A3A" font-weight="700">소금창고 존</text>
-      <circle cx="560" cy="80" r="24" fill="#E4E9F5" stroke="#B9C4E0"/>
-      <text x="537" y="120" font-size="12" fill="#5A6B80">흔들전망대</text>
-      ${seeds.map(b=>`<g class="bdot" onclick="hlBooth(${b.n})">
-        <circle cx="${b.x}" cy="${b.y}" r="12" fill="#1B5FAA" stroke="#fff" stroke-width="2.5"/>
-        <text x="${b.x}" y="${b.y+4.5}" font-size="12" fill="#fff" text-anchor="middle" font-weight="800">${b.n}</text></g>`).join('')}
-    </svg>
-    <div class="cap">부스 번호를 누르면 아래 목록에서 해당 부스가 강조됩니다.</div>
-  </div>` : '';
-  const seedCards=seeds.map(b=>`
-     <div class="booth" id="booth-${b.n}">
-       <h4><span class="num">${b.n}</span>${esc(b.name)} <span class="badge b-cert">시흥시 인증</span></h4>
-       <div class="bc">${esc(b.cat)}</div><p>${esc(b.desc)}</p>
-     </div>`).join('');
-  document.getElementById('p-booth').innerHTML = mapSvg +
-   `<div class="booth-list" id="boothListWrap">${seedCards}<span id="dbBoothSlot"></span></div>
+  document.getElementById('p-booth').innerHTML=`
+    <div class="booth-map" id="boothGallery" style="display:none"></div>
+    <div class="booth-list" id="boothListWrap"></div>
     <div id="boothEmpty"></div>
     <div class="post-form" style="margin-top:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -752,38 +733,88 @@ function renderBooth(){
         </div>
         <div class="row"><input id="bfOrg" placeholder="운영 단체·소속 (예: 시흥청년몰)" maxlength="20"></div>
         <textarea id="bfDesc" placeholder="부스 소개 (판매·체험 내용 등)" maxlength="200"></textarea>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap">
+        <div class="row" style="margin-top:8px;align-items:center">
+          <input type="file" id="bfPhotos" accept="image/*" multiple style="border:0;padding:0;font-size:13.5px">
+        </div>
+        <div style="font-size:12.5px;color:var(--ink-soft)">부스 사진 최대 3장 — 업로드 시 자동으로 용량이 최적화됩니다.</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap">
           <span style="font-size:12.5px;color:var(--ink-soft)">신청 후 시흥시 담당자의 승인을 거쳐 게시됩니다.</span>
           <button class="submit" id="bfBtn" onclick="applyBooth()">신청하기</button>
         </div>
       </div>
     </div>`;
+  boothAll=(BOOTHS[curId]||[]).map(b=>({uid:'s'+b.n,name:b.name,cat:b.cat,org:'',desc:b.desc,photos:[]}));
+  selectedBooth=null;
+  paintBooths();
   if(unsubBooth)unsubBooth();
-  boothDbCache=[];
   if(db){
     unsubBooth=db.collection('booths').where('festivalId','==',curId).where('approved','==',true)
       .onSnapshot(sn=>{
-        boothDbCache=sn.docs.map(d=>({id:d.id,...d.data()}));
-        paintDbBooths(seeds.length);
-      },err=>{console.error(err);paintDbBooths(seeds.length);});
-  }else paintDbBooths(seeds.length);
+        const seeds=(BOOTHS[curId]||[]).map(b=>({uid:'s'+b.n,name:b.name,cat:b.cat,org:'',desc:b.desc,photos:[]}));
+        const dbs=sn.docs.map(d=>{const x=d.data();return {uid:d.id,name:x.name,cat:x.cat||'',org:x.org||'',desc:x.desc||'',photos:x.photos||[]};});
+        boothAll=[...seeds,...dbs];
+        if(selectedBooth&&!boothAll.some(b=>b.uid===selectedBooth))selectedBooth=null;
+        paintBooths();
+      },err=>{console.error(err);paintBooths();});
+  }
 }
-function paintDbBooths(seedCnt){
-  const slot=document.getElementById('dbBoothSlot'); if(!slot)return;
-  slot.outerHTML=`<span id="dbBoothSlot"></span>`+boothDbCache.map(b=>`
-     <div class="booth">
-       <h4><span class="num">🏪</span>${esc(b.name)} <span class="badge b-cert">시흥시 인증</span></h4>
-       <div class="bc">${esc(b.cat||'')}${b.org?' · '+esc(b.org):''}</div><p>${esc(b.desc||'')}</p>
-     </div>`).join('');
-  const empty=document.getElementById('boothEmpty'); if(!empty)return;
-  empty.innerHTML=(seedCnt+boothDbCache.length)?'' :
+function paintBooths(){
+  const wrap=document.getElementById('boothListWrap'); if(!wrap)return;
+  wrap.innerHTML=boothAll.map(b=>`
+    <div class="booth ${selectedBooth===b.uid?'hl':''}" id="bcard-${b.uid}" onclick="selectBooth('${b.uid}')">
+      <h4>${esc(b.name)} <span class="badge b-cert">시흥시 인증</span></h4>
+      <div class="bc">${esc(b.cat)}${b.org?' · '+esc(b.org):''}</div><p>${esc(b.desc)}</p>
+    </div>`).join('');
+  const empty=document.getElementById('boothEmpty');
+  if(empty)empty.innerHTML=boothAll.length?'' :
     `<div class="empty-note" style="text-align:center"><img src="${IMGS.TEA}" alt="차 마시는 토로" style="width:130px;max-width:55%"><br>아직 인증된 참여 부스가 없습니다.<br>아래에서 첫 부스를 신청해 보세요!</div>`;
+  if(!selectedBooth&&boothAll.length)selectBooth(boothAll[0].uid,true);
+  else paintGallery();
+}
+function selectBooth(uid,quiet){
+  selectedBooth=uid;
+  document.querySelectorAll('#boothListWrap .booth').forEach(x=>x.classList.remove('hl'));
+  const card=document.getElementById('bcard-'+uid);
+  if(card){card.classList.add('hl'); if(!quiet)document.getElementById('boothGallery').scrollIntoView({behavior:'smooth',block:'nearest'});}
+  paintGallery();
+}
+function paintGallery(){
+  const g=document.getElementById('boothGallery'); if(!g)return;
+  if(!boothAll.length){g.style.display='none';return;}
+  const b=boothAll.find(x=>x.uid===selectedBooth);
+  if(!b){g.style.display='none';return;}
+  g.style.display='';
+  g.innerHTML=`<div class="gal-head">📷 ${esc(b.name)}</div>`+
+    (b.photos.length
+      ? `<div class="gal-row">${b.photos.map((p,i)=>`<img src="${p}" alt="${esc(b.name)} 사진 ${i+1}">`).join('')}</div>`
+      : `<div class="gal-empty">이 부스가 올린 사진이 아직 없습니다.</div>`);
 }
 function toggleBoothForm(){
   const f=document.getElementById('boothForm');
   const open=f.style.display==='none';
   f.style.display=open?'block':'none';
   document.getElementById('bfToggle').textContent=open?'신청서 닫기 ▴':'신청서 열기 ▾';
+}
+function loadImgFile(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=r.result;};
+    r.onerror=rej; r.readAsDataURL(file);
+  });
+}
+async function compressPhoto(file){
+  const im=await loadImgFile(file);
+  const make=(maxSide,q)=>{
+    const s=Math.min(1,maxSide/Math.max(im.width,im.height));
+    const cv=document.createElement('canvas');
+    cv.width=Math.max(1,Math.round(im.width*s)); cv.height=Math.max(1,Math.round(im.height*s));
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+    return cv.toDataURL('image/jpeg',q);
+  };
+  let d=make(900,0.72);
+  if(d.length>300000)d=make(680,0.62);
+  if(d.length>300000)d=make(520,0.55);
+  return d;
 }
 async function applyBooth(){
   const name=document.getElementById('bfName').value.trim();
@@ -792,22 +823,29 @@ async function applyBooth(){
   const desc=document.getElementById('bfDesc').value.trim();
   if(!name||!org||!desc){alert('부스명, 운영 단체, 소개를 모두 입력해 주세요.');return;}
   if(!db){alert('데이터베이스에 연결되지 않았습니다.');return;}
-  const btn=document.getElementById('bfBtn'); btn.disabled=true;
+  const files=[...document.getElementById('bfPhotos').files];
+  if(files.length>3){alert('사진은 최대 3장까지 첨부할 수 있습니다.');return;}
+  const btn=document.getElementById('bfBtn'); btn.disabled=true; btn.textContent='처리 중…';
   try{
+    const photos=[];
+    for(const f of files){
+      if(!f.type.startsWith('image/'))continue;
+      photos.push(await compressPhoto(f));
+    }
+    if(photos.reduce((a,p)=>a+p.length,0)>850000){
+      alert('사진 용량이 너무 큽니다. 장수를 줄여 다시 시도해 주세요.');
+      btn.disabled=false; btn.textContent='신청하기'; return;
+    }
     await db.collection('booths').add({
-      festivalId:curId, name, org, cat, desc, approved:false,
+      festivalId:curId, name, org, cat, desc, photos, approved:false,
       appliedAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     ['bfName','bfOrg','bfDesc'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('bfPhotos').value='';
     toggleBoothForm();
     alert('부스 신청이 접수되었습니다! 시흥시 담당자의 승인이 완료되면 이 페이지에 게시됩니다.');
   }catch(e){alert('신청에 실패했습니다: '+e.message);}
-  btn.disabled=false;
-}
-function hlBooth(n){
-  document.querySelectorAll('.booth').forEach(x=>x.classList.remove('hl'));
-  const el=document.getElementById('booth-'+n);
-  if(el){el.classList.add('hl'); el.scrollIntoView({behavior:'smooth',block:'center'});}
+  btn.disabled=false; btn.textContent='신청하기';
 }
 
 /* ═══════════ 관리자 (#admin 라우트 + 전체 관리) ═══════════ */
@@ -959,7 +997,7 @@ function renderAdmBooths(){
   const el=document.getElementById('admBooths'); if(!el)return;
   const pending=admBoothCache.filter(b=>!b.approved);
   const appr=admBoothCache.filter(b=>b.approved);
-  const row=(b,btns)=>`<div class="ai"><span>🏪 <b>${esc(b.name)}</b> · ${esc(b.cat||'')} · ${esc(b.org||'')}<br>
+  const row=(b,btns)=>`<div class="ai"><span>${(b.photos&&b.photos.length)?`<img src="${b.photos[0]}" style="height:44px;border-radius:7px;vertical-align:middle;margin-right:8px">`:''}🏪 <b>${esc(b.name)}</b> · ${esc(b.cat||'')} · ${esc(b.org||'')}<br>
     <span style="font-size:12.5px;color:var(--ink-soft)">[${esc(festName(b.festivalId))}] ${esc(b.desc||'')}</span></span><span>${btns}</span></div>`;
   el.innerHTML=
     `<h3 style="font-size:15.5px;color:var(--blue-deep);margin:16px 0 9px">부스 신청 대기 <span class="badge b-live" style="font-size:11px">${pending.length}</span></h3>`+
