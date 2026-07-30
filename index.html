@@ -8,6 +8,7 @@
 <meta property="og:title" content="시흥어때">
 <meta property="og:description" content="시흥 곳곳의 축제를 지도·달력으로 한눈에! 축제 게시판에서 실시간 소식도 확인하세요.">
 <meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{
@@ -15,6 +16,7 @@
   --ink:#1A2433; --ink-soft:#5A6B80; --paper:#FFFFFF; --bg:#F6F9FC;
   --live:#E8762D; --done:#9AA7B5; --ok:#2E9E6B;
 }
+html{color-scheme:light}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
 button{font-family:inherit;cursor:pointer}
@@ -447,7 +449,7 @@ try{
   firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
   auth = firebase.auth();
-}catch(e){ console.error('Firebase 초기화 실패:', e); }
+}catch(e){ /* 미리보기 등 차단 환경: 게시판·관리자 화면에서 별도 안내 표시 */ }
 
 async function sha256(t){
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
