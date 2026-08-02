@@ -358,7 +358,7 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
       </div>
       <div class="adm-list" id="admParkings"></div>
       <div class="adm-form">
-        <h3 id="abTitle">부스 직접 등록</h3>
+        <h3 id="abTitle">부스 등록</h3>
         <div class="fr"><label>축제 *</label><select id="abFest"></select></div>
         <div class="fr"><label>부스명 *</label><input id="abName" maxlength="20" placeholder="예: 시흥 로컬푸드 마켓"></div>
         <div class="fr"><label>분류</label><select id="abCat"><option>먹거리</option><option>체험</option><option>판매</option><option>공연</option><option>홍보</option><option>기타</option></select></div>
@@ -388,67 +388,16 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 /* ═══════════ 데이터 (예시 일정 포함) ═══════════ */
-const SEEDS = [
- {id:'gaetgol', name:'시흥갯골축제', tagline:'경기도 유일 내만갯골에서 열리는 생태축제', color:'#1B5FAA',
-  start:'2026-09-18', end:'2026-09-20', time:'10:00 ~ 21:00',
-  place:'시흥갯골생태공원', addr:'경기도 시흥시 동서로 287 (장곡동)', lat:37.3888, lng:126.7793,
-  desc:'옛 소래염전 터와 습지가 어우러진 갯골생태공원에서 열리는 시흥 대표 축제입니다. 흔들전망대 라이트쇼, 어쿠스틱 음악제, 소금·갯벌 체험 프로그램이 진행되며, 자연 보호를 위해 차 없는 축제로 운영됩니다.',
-  parking:'축제 기간 공원 주차장 폐쇄(차 없는 축제)\n· 시흥시청 임시주차장 이용 후 셔틀버스 탑승\n· 장곡동 공영주차장(도보 25분)',
-  transit:'· 버스: 시흥시청 정류장 하차(11-3, 20, 26, 36, 39, 61, 63 등) → 무료 셔틀버스 환승\n· 지하철: 서해선 시흥시청역 하차 → 셔틀버스',
-  links:[{label:'공식 홈페이지',url:'https://sgfestival.com',icon:'🌐'},{label:'시흥시 문화관광',url:'https://www.siheung.go.kr/cultour/contents.do?mId=0301010000',icon:'🏛'}],
-  hasBoothMap:true, est:true},
- {id:'wolgot', name:'시흥월곶포구축제', tagline:'포구의 낭만과 도시의 활기를 함께 즐기는 축제', color:'#B8722C',
-  start:'2026-10-16', end:'2026-10-18', time:'10:00 ~ 22:00',
-  place:'월곶포구 해안 일원·달빛거리', addr:'경기도 시흥시 월곶중앙로14번길 56 일원 (월곶동)', lat:37.3919, lng:126.7429,
-  desc:'수도권 명품 해안 월곶포구에서 열리는 축제로, 경기대표 관광축제로 선정되었습니다. 어선 승선 체험, 맨손 고기잡이, 왕새우 낚시, 새우젓 담그기 등 포구만의 체험과 개막 드론쇼, 폐막 불꽃쇼가 펼쳐집니다.',
-  parking:'· 월곶해양수변공원 공영주차장\n· 축제 기간 임시주차장 운영(혼잡 시 대중교통 권장)',
-  transit:'· 지하철: 수인분당선 월곶역 하차 → 도보 10분\n· 버스: 월곶포구 정류장 하차(23, 3700 등)',
-  links:[{label:'대한민국 구석구석',url:'https://korean.visitkorea.or.kr/kfes/detail/fstvlDetail.do?fstvlCntntsId=646ab327-6614-457f-b147-b77abf72e257',icon:'🌐'}],
-  hasBoothMap:false, est:true},
- {id:'lotus', name:'연꽃테마파크 연꽃 나들이', tagline:'관곡지 일원 연꽃 군락지 개화 시즌', color:'#2E9E6B',
-  start:'2026-07-10', end:'2026-08-16', time:'상시 개방 (의자 대여 평일 09:00~17:00)',
-  place:'연꽃테마파크·관곡지', addr:'경기도 시흥시 관곡지로 139 일원 (하중동)', lat:37.3966, lng:126.8091,
-  desc:'조선 전기 강희맹 선생이 연꽃을 처음 심은 관곡지 일대의 연꽃 군락지입니다. 7월 초부터 꽃이 피기 시작해 7월 말 절정을 이루며, 개화 시즌에 맞춰 산책로와 포토존이 운영됩니다.',
-  parking:'· 연꽃테마파크 공영주차장(무료)\n· 주말 혼잡 시 하중동 임시주차장 이용',
-  transit:'· 버스: 관곡지 정류장 하차(63, 5602 등)\n· 지하철: 서해선 시흥시청역 → 버스 환승 약 10분',
-  links:[{label:'시흥시 문화관광',url:'https://www.siheung.go.kr/cultour/contents.do?mId=0401050000',icon:'🏛'}],
-  hasBoothMap:false, est:true},
- {id:'yeonseong', name:'연성문화제', tagline:'연꽃 고을 시흥의 전통문화축제', color:'#7A4FB0',
-  start:'2026-06-27', end:'2026-06-28', time:'10:00 ~ 20:00',
-  place:'관곡지·연꽃테마파크 일원', addr:'경기도 시흥시 하중동 208 일원', lat:37.3958, lng:126.8075,
-  desc:'1989년 시 승격과 함께 시작된 시흥의 전통문화축제입니다. 전래놀이, 한지공예, 연꽃등 만들기, 시흥향토민요 공연 등 전통문화 체험 행사가 열립니다.',
-  parking:'· 연꽃테마파크 공영주차장\n· 행사 기간 임시주차장 운영',
-  transit:'· 버스: 관곡지 정류장 하차\n· 서해선 시흥시청역 → 버스 환승',
-  hasBoothMap:false, est:true},
- {id:'mulwang', name:'물왕예술제', tagline:'물왕저수지에서 열리는 시민 문화예술 축제', color:'#0E8FA8',
-  start:'2026-06-13', end:'2026-06-14', time:'11:00 ~ 20:00',
-  place:'물왕저수지 일원', addr:'경기도 시흥시 물왕동', lat:37.3753, lng:126.8408,
-  desc:'1993년부터 이어진 시민 문화예술 축제로, 물왕저수지 수변을 따라 공연·전시·체험 부스가 운영됩니다.',
-  parking:'· 물왕저수지 공영주차장\n· 수변 도로 갓길 주차 금지',
-  transit:'· 버스: 물왕동 정류장 하차(26-1, 32 등)',
-  hasBoothMap:false, est:true},
- {id:'oido', name:'오이도 해넘이·해맞이 축제', tagline:'서해 낙조와 새해 일출을 한자리에서', color:'#C24545',
-  start:'2026-12-31', end:'2027-01-01', time:'12.31 15:00 ~ 1.1 09:00',
-  place:'오이도 빨강등대·함상전망대', addr:'경기도 시흥시 오이도로 175 일원 (정왕동)', lat:37.3448, lng:126.6866,
-  desc:'한 해의 마지막 낙조와 새해 첫 일출을 맞이하는 송년 축제입니다. 소망 풍선 날리기, 새해 소원지 쓰기, 거리 공연이 이어집니다.',
-  parking:'· 오이도 공영주차장(혼잡 예상, 대중교통 권장)',
-  transit:'· 지하철: 4호선·수인분당선 오이도역 → 버스 환승(30-2 등)\n· 행사 당일 임시 셔틀버스 운영',
-  hasBoothMap:false, est:true},
-];
-const FESTIVALS=[]; SEEDS.forEach(s=>FESTIVALS.push({...s}));
+const SEEDS = [];
+const FESTIVALS=[];
+
 
 /* 공영주차장: 관리자가 등록한 데이터를 DB에서 실시간 로드 */
 let PARKINGS = [];
 
 
-/* 갯골축제 참여 부스 (지자체 인증 예시) */
-const BOOTHS = {gaetgol:[
- {n:1,name:'소래염전 소금공방',cat:'체험 · 지역단체',x:150,y:150,desc:'전통 방식 천일염 만들기 체험과 소금 공예품 판매'},
- {n:2,name:'갯골 생태해설 부스',cat:'교육 · 시흥환경연대',x:255,y:105,desc:'갯벌 생물 관찰 키트와 생태해설 프로그램 예약'},
- {n:3,name:'시흥 로컬푸드 마켓',cat:'먹거리 · 시흥농협',x:355,y:170,desc:'포도·연근 등 시흥 농특산물 직거래 판매'},
- {n:4,name:'청년 플리마켓 존',cat:'판매 · 시흥청년몰',x:445,y:110,desc:'시흥 청년 창작자 12팀의 수공예품 마켓'},
- {n:5,name:'어쿠스틱 버스킹 무대',cat:'공연 · 시흥음악협회',x:520,y:200,desc:'잔디마당 상시 버스킹, 시간표는 게시판 공지 참고'},
-]};
+const BOOTHS = {};
+
 
 /* ═══════════ Firebase 연결 ═══════════ */
 const firebaseConfig = {
@@ -666,16 +615,17 @@ function openDetail(id){
   const badge = st.k==='live'?'<span class="badge b-live">진행중</span>'
     : st.k==='dday'?`<span class="badge b-dday">${st.label}</span>`:'<span class="badge b-done">종료</span>';
   document.getElementById('dtHead').innerHTML=`${badge}<h1>${esc(f.name)}</h1><div class="tag">${esc(f.tagline||'')}</div>`;
+  const infoItems=[];
+  infoItems.push(`<div class="info-item"><div class="k">기간</div><div class="v">${fmt(f.start)}${f.start!==f.end?' ~ '+fmt(f.end):''}</div></div>`);
+  const has=v=>v&&String(v).trim()&&String(v).trim()!=='-';
+  if(has(f.time))infoItems.push(`<div class="info-item"><div class="k">시간</div><div class="v">${esc(f.time)}</div></div>`);
+  if(has(f.place)||has(f.addr))infoItems.push(`<div class="info-item"><div class="k">장소</div><div class="v">${esc(f.place||'')}${has(f.addr)?'\n'+esc(f.addr):''}</div></div>`);
+  if(has(f.parking))infoItems.push(`<div class="info-item"><div class="k">주차 안내</div><div class="v">${esc(f.parking)}</div></div>`);
+  if(has(f.transit))infoItems.push(`<div class="info-item"><div class="k">대중교통</div><div class="v">${esc(f.transit)}</div></div>`);
   document.getElementById('p-info').innerHTML=`
-    <div class="desc-box">${esc(f.desc||'')}</div>
+    ${has(f.desc)?`<div class="desc-box">${esc(f.desc)}</div>`:''}
     ${f.links&&f.links.length?`<div class="link-row">${f.links.map(l=>`<a class="lk" href="${l.url}" target="_blank" rel="noopener">${l.icon||'🔗'} ${esc(l.label)}</a>`).join('')}</div>`:''}
-    <div class="info-grid">
-      <div class="info-item"><div class="k">기간</div><div class="v">${fmt(f.start)}${f.start!==f.end?' ~ '+fmt(f.end):''}</div></div>
-      <div class="info-item"><div class="k">시간</div><div class="v">${esc(f.time||'-')}</div></div>
-      <div class="info-item"><div class="k">장소</div><div class="v">${esc(f.place)}\n${esc(f.addr||'')}\n${nvBtn(f.place,'네이버 지도·로드뷰 보기')}</div></div>
-      <div class="info-item"><div class="k">주차 안내</div><div class="v">${esc(f.parking||'-')}</div></div>
-      <div class="info-item"><div class="k">대중교통</div><div class="v">${esc(f.transit||'-')}</div></div>
-    </div>`;
+    <div class="info-grid">${infoItems.join('')}</div>`;
   renderBoard(); renderBooth();
   switchPanel('info');
   show('detail');
@@ -1176,7 +1126,7 @@ function abReset(){
   abEditId=null; abPhotosArr=[];
   ['abName','abOrg','abDesc'].forEach(i=>document.getElementById(i).value='');
   abThumbs();
-  document.getElementById('abTitle').textContent='부스 직접 등록';
+  document.getElementById('abTitle').textContent='부스 등록';
   document.getElementById('abSubmit').textContent='부스 등록';
   document.getElementById('abCancel').style.display='none';
 }
