@@ -520,12 +520,31 @@ const nvBtn = (q,txt) => `<a class="nv-btn" href="${naverUrl(q)}" target="_blank
 const views={home:'v-home',map:'v-map',cal:'v-cal',detail:'v-detail',admin:'v-admin'};
 let lastListView='home';
 let mapObj=null, admMapObj=null;
+function fixMap(m,el){
+  if(!m)return;
+  [0,80,250,600].forEach(t=>setTimeout(()=>{
+    try{ if(!el||el.offsetWidth>0) m.invalidateSize(); }catch(e){}
+  },t));
+}
+function watchMapSize(m,el){
+  if(!el||!window.ResizeObserver)return;
+  let last=0;
+  new ResizeObserver(()=>{
+    const w=el.offsetWidth;
+    if(w>0&&w!==last){ last=w; try{m.invalidateSize();}catch(e){} }
+  }).observe(el);
+}
+function fixAdminMaps(){
+  fixMap(admMapObj,document.getElementById('admMap'));
+  fixMap(apMapObj,document.getElementById('apMap'));
+}
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   document.getElementById(views[v]).classList.add('on');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(v==='home'||v==='map'||v==='cal')lastListView=v;
-  if(v==='map'){initMap();setTimeout(()=>mapObj.invalidateSize(),50);}
+  if(v==='map'){initMap();fixMap(mapObj,document.getElementById('mapBox'));}
+  if(v==='admin')fixAdminMaps();
   window.scrollTo(0,0);
 }
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
@@ -937,12 +956,12 @@ auth && auth.onAuthStateChanged(u=>{
   if(u&&!ok){ alert(u.email+' 계정은 관리자로 등록되어 있지 않습니다.'); auth.signOut(); return; }
   if(ok){
     document.getElementById('admWho').textContent=u.email;
-    initAdmMap(); renderAdmList(); subscribeAdmBooths(); abInit(); fillAbFest(); apInitMap(); renderAdmParkings();
+    initAdmMap(); renderAdmList(); subscribeAdmBooths(); abInit(); fillAbFest(); apInitMap(); renderAdmParkings(); fixAdminMaps();
   }
   if(curId&&document.getElementById('v-detail').classList.contains('on'))renderBoard();
 });
 function initAdmMap(){
-  if(admMapObj){ setTimeout(()=>admMapObj.invalidateSize(),50); return; }
+  if(admMapObj){ fixMap(admMapObj,document.getElementById('admMap')); return; }
   admMapObj=L.map('admMap').setView([37.38,126.79],12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(admMapObj);
   admMapObj.on('click',e=>{
@@ -952,7 +971,8 @@ function initAdmMap(){
     document.getElementById('admCoord').textContent=
       `선택된 위치: 위도 ${e.latlng.lat.toFixed(5)}, 경도 ${e.latlng.lng.toFixed(5)}`;
   });
-  setTimeout(()=>admMapObj.invalidateSize(),50);
+  watchMapSize(admMapObj,document.getElementById('admMap'));
+  fixMap(admMapObj,document.getElementById('admMap'));
 }
 function admFormReset(){
   editTarget=null;
@@ -1056,7 +1076,7 @@ function renderAdmList(){
 /* 관리자 주차장 등록·수정 */
 let apMapObj=null, apMarker=null, apLatLng=null, apEditId=null;
 function apInitMap(){
-  if(apMapObj){setTimeout(()=>apMapObj.invalidateSize(),50);return;}
+  if(apMapObj){fixMap(apMapObj,document.getElementById('apMap'));return;}
   apMapObj=L.map('apMap').setView([37.38,126.79],12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(apMapObj);
   apMapObj.on('click',e=>{
@@ -1064,7 +1084,8 @@ function apInitMap(){
     if(apMarker)apMarker.setLatLng(e.latlng); else apMarker=L.marker(e.latlng).addTo(apMapObj);
     document.getElementById('apCoord').textContent=`선택된 위치: 위도 ${e.latlng.lat.toFixed(5)}, 경도 ${e.latlng.lng.toFixed(5)}`;
   });
-  setTimeout(()=>apMapObj.invalidateSize(),50);
+  watchMapSize(apMapObj,document.getElementById('apMap'));
+  fixMap(apMapObj,document.getElementById('apMap'));
 }
 function apReset(){
   apEditId=null; apLatLng=null;
