@@ -546,7 +546,7 @@ function addFestMarker(f){
   L.marker([f.lat,f.lng],{icon:festMarkerIcon(f,st)}).addTo(festLayer)
    .bindPopup(`<div class="pop"><b>${esc(f.name)}</b> <span class="badge ${st.k==='live'?'b-live':'b-dday'}" style="font-size:11px">${st.label}</span>
      <div class="pm">${fmt(f.start)}${f.start!==f.end?' ~ '+fmt(f.end):''} · ${esc(f.place)}</div>
-     <div class="row"><button onclick="openDetail('${f.id}')">자세히 보기</button>${nvBtn(f.place)}</div></div>`);
+     <div class="row"><button onclick="openDetail('${f.id}')">자세히 보기</button></div></div>`);
 }
 function initMap(){
   if(mapObj)return;
@@ -570,8 +570,7 @@ function refreshParkings(){
         box-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;
         color:#fff;font-size:11px;font-weight:800">P</div>`})})
       .bindPopup(`<div class="pop"><b>${esc(p.name)}</b>
-        <div class="pm">${p.type}주차장${p.note?' · '+esc(p.note):''}</div>
-        <div class="row">${nvBtn(p.name,'네이버 지도·로드뷰')}</div></div>`);
+        <div class="pm">${p.type}주차장${p.note?' · '+esc(p.note):''}</div></div>`);
   }));
   const t=document.getElementById('pkToggle');
   if(!t||t.checked)pkLayer.addTo(mapObj);
@@ -1218,7 +1217,7 @@ db && db.collection('festivals').onSnapshot(sn=>{
   });
   overrides.forEach(o=>{
     const i=FESTIVALS.findIndex(f=>f.id===o.seedId);
-    if(i<0)return;
+    if(i<0){ if(!o.hidden&&o.name) FESTIVALS.push({...o, id:o.docId, custom:true}); return; }
     if(o.hidden) FESTIVALS.splice(i,1);
     else FESTIVALS[i]={...FESTIVALS[i], ...o, id:o.seedId};
   });
