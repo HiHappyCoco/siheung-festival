@@ -56,6 +56,7 @@ h2.sec:first-child{margin-top:0}
 .hero .date{font-size:13px;letter-spacing:.05em;color:#2F5375;font-weight:700;text-shadow:0 1px 2px rgba(255,255,255,.7)}
 .hero h1{font-size:27px;letter-spacing:-.02em;margin:6px 0 5px;font-weight:800;color:#0A2F5C;text-shadow:0 1px 3px rgba(255,255,255,.75)}
 .hero p{font-size:14.5px;color:#22425F;font-weight:500;max-width:460px;text-shadow:0 1px 2px rgba(255,255,255,.7)}
+.hero p .ln{display:inline-block}
 body.dark .hero::before{background:linear-gradient(95deg,rgba(9,34,56,.7) 0%,rgba(9,34,56,.46) 34%,rgba(9,34,56,.2) 62%,rgba(9,34,56,.08) 100%)}
 body.dark .hero .date{color:#CFE2F4;text-shadow:0 1px 3px rgba(4,18,32,.75)}
 body.dark .hero h1{color:#fff;text-shadow:0 1px 4px rgba(4,18,32,.8)}
@@ -215,7 +216,7 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
   body.dark .hero::before{background:linear-gradient(180deg,rgba(9,34,56,.82) 0%,rgba(9,34,56,.56) 30%,rgba(9,34,56,.2) 62%,rgba(9,34,56,.06) 100%)}
   .hero-txt{max-width:100%}
   .hero h1{font-size:20px;margin:4px 0 4px}
-  .hero p{font-size:13px;max-width:100%}
+  .hero p{font-size:12.5px;max-width:100%;letter-spacing:-.02em;line-height:1.5}
   #mapBox{height:420px}
   .cal-cell{min-height:64px;padding:3px}
   .cal-cell .d{font-size:11.5px}
@@ -251,7 +252,7 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
       <div class="hero-txt">
         <div class="date" id="heroDate"></div>
         <h1>오늘, 시흥에서 만나는 축제 소식</h1>
-        <p>시흥 곳곳에서 열리는 축제 소식을 해로·토로와 함께 한 눈에 확인하세요.</p>
+        <p><span class="ln">시흥 곳곳에서 열리는 축제 소식을</span> <span class="ln">해로·토로와 함께 한 눈에 확인하세요.</span></p>
       </div>
     </div>
     <h2 class="sec">지금 진행 중</h2>
