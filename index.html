@@ -38,7 +38,7 @@ nav button:hover{background:var(--sky)}
 .view{display:none}.view.on{display:block}
 h2.sec{font-size:20px;letter-spacing:-.02em;margin:26px 0 12px;color:var(--blue-deep)}
 h2.sec:first-child{margin-top:0}
-.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.01em}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.01em;white-space:nowrap}
 .b-live{background:var(--live);color:#fff}
 .b-dday{background:var(--sky);color:var(--blue-deep);border:1px solid var(--sky-line)}
 .b-done{background:#EEF1F5;color:var(--done)}
@@ -65,7 +65,8 @@ body.dark .hero p{color:#E2EDF8;text-shadow:0 1px 3px rgba(4,18,32,.75)}
 .card{background:var(--paper);border:1px solid var(--sky-line);border-radius:14px;padding:18px 18px 16px;cursor:pointer;transition:box-shadow .15s,transform .15s;position:relative}
 .card:hover{box-shadow:0 6px 18px rgba(27,95,170,.12);transform:translateY(-2px)}
 .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.card h3{font-size:17px;letter-spacing:-.01em}
+.card .top .badge{flex:0 0 auto;margin-top:1px}
+.card h3{font-size:17px;letter-spacing:-.01em;min-width:0;flex:1 1 auto;word-break:keep-all}
 .card .tag{font-size:13px;color:var(--ink-soft);margin:3px 0 10px}
 .card .meta{font-size:13.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:3px}
 .card .meta b{color:var(--ink);font-weight:600}
