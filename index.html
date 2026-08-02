@@ -66,9 +66,9 @@ body.dark .hero p{color:#E2EDF8;text-shadow:0 1px 3px rgba(4,18,32,.75)}
 .card:hover{box-shadow:0 6px 18px rgba(27,95,170,.12);transform:translateY(-2px)}
 .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .card .top .badge{flex:0 0 auto;margin-top:1px}
-.card h3{font-size:17px;letter-spacing:-.01em;min-width:0;flex:1 1 auto;word-break:keep-all}
-.card .tag{font-size:13px;color:var(--ink-soft);margin:3px 0 10px}
-.card .meta{font-size:13.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:3px}
+.card h3{font-size:17px;letter-spacing:-.01em;min-width:0;flex:1 1 auto;word-break:keep-all;white-space:pre-line}
+.card .tag{font-size:13px;color:var(--ink-soft);margin:3px 0 10px;white-space:pre-line}
+.card .meta{font-size:13.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:3px;white-space:pre-line}
 .card .meta b{color:var(--ink);font-weight:600}
 .card.live{border-color:var(--live);box-shadow:0 0 0 1px var(--live) inset}
 .empty-note{color:var(--ink-soft);font-size:14px;padding:14px 4px}
@@ -108,8 +108,8 @@ body.dark .hero p{color:#E2EDF8;text-shadow:0 1px 3px rgba(4,18,32,.75)}
 /* ── 상세 ─────────────────────────── */
 .back{border:0;background:none;color:var(--blue);font-size:14.5px;font-weight:600;padding:0;margin-bottom:14px}
 .dt-head{background:var(--paper);border:1px solid var(--sky-line);border-radius:14px;padding:24px}
-.dt-head h1{font-size:24px;letter-spacing:-.02em;margin:8px 0 4px}
-.dt-head .tag{color:var(--ink-soft);font-size:14.5px}
+.dt-head h1{font-size:24px;letter-spacing:-.02em;margin:8px 0 4px;white-space:pre-line}
+.dt-head .tag{color:var(--ink-soft);font-size:14.5px;white-space:pre-line}
 .dt-tabs{display:flex;gap:4px;margin:18px 0 14px;border-bottom:2px solid var(--sky-line)}
 .dt-tabs button{border:0;background:none;padding:10px 16px;font-size:15px;color:var(--ink-soft);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px}
 .dt-tabs button.on{color:var(--blue-deep);border-color:var(--blue)}
@@ -173,6 +173,7 @@ body.dark .hero p{color:#E2EDF8;text-shadow:0 1px 3px rgba(4,18,32,.75)}
 .adm-form label{font-size:13.5px;font-weight:600;color:var(--ink-soft)}
 .adm-form input,.adm-form textarea,.adm-form select{border:1px solid var(--sky-line);border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit;width:100%}
 .adm-form textarea{min-height:60px;resize:vertical}
+.adm-form textarea.ta-line{min-height:40px;line-height:1.45}
 #admMap{height:260px;border-radius:10px;border:1px solid var(--sky-line);margin:4px 0 2px}
 .adm-form .hint{font-size:12.5px;color:var(--ink-soft)}
 .adm-form .submit{border:0;background:var(--blue);color:#fff;border-radius:8px;padding:10px 20px;font-size:14.5px;font-weight:700;margin-top:8px}
@@ -317,13 +318,13 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
       <div class="demo-bar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>🔐 관리자 모드 — 여기서 등록한 축제는 데이터베이스에 저장되어 모든 방문자에게 표시됩니다.</span><span><b id="admWho"></b> <button class="back" style="margin:0 0 0 8px" onclick="admLogout()">로그아웃</button></span></div>
       <div class="adm-form">
         <h3 id="afTitle">새 축제 등록</h3>
-        <div class="fr"><label>축제명 *</label><input id="afName" maxlength="30" placeholder="예: 시흥 청년 문화축제"></div>
-        <div class="fr"><label>한 줄 소개</label><input id="afTag" maxlength="40" placeholder="예: 청년이 만드는 가을 문화 장터"></div>
+        <div class="fr"><label>축제명 *</label><textarea id="afName" class="ta-line" maxlength="30" placeholder="예: 시흥 청년 문화축제"></textarea></div>
+        <div class="fr"><label>한 줄 소개</label><textarea id="afTag" class="ta-line" maxlength="40" placeholder="예: 청년이 만드는 가을 문화 장터"></textarea></div>
         <div class="fr"><label>시작일 *</label><input id="afStart" type="date"></div>
         <div class="fr"><label>종료일 *</label><input id="afEnd" type="date"></div>
-        <div class="fr"><label>운영 시간</label><input id="afTime" placeholder="예: 10:00 ~ 20:00"></div>
-        <div class="fr"><label>장소명 *</label><input id="afPlace" maxlength="30" placeholder="예: 배곧한울공원"></div>
-        <div class="fr"><label>주소</label><input id="afAddr" placeholder="예: 경기도 시흥시 배곧동 ..."></div>
+        <div class="fr"><label>운영 시간</label><textarea id="afTime" class="ta-line" placeholder="예: 10:00 ~ 20:00"></textarea></div>
+        <div class="fr"><label>장소명 *</label><textarea id="afPlace" class="ta-line" maxlength="30" placeholder="예: 배곧한울공원"></textarea></div>
+        <div class="fr"><label>주소</label><textarea id="afAddr" class="ta-line" placeholder="예: 경기도 시흥시 배곧동 ..."></textarea></div>
         <div class="fr"><label>홈페이지 URL</label><input id="afLink" placeholder="예: https:// (선택)"></div>
         <div class="fr"><label>SNS URL</label><input id="afSns" placeholder="인스타그램·블로그 등 (선택)"></div>
         <div class="fr"><label>소개</label><textarea id="afDesc" maxlength="300" placeholder="축제 소개를 입력하세요."></textarea></div>
@@ -344,6 +345,18 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
         <div style="text-align:right"><button class="back" id="afCancel" style="margin:0 12px 0 0;display:none" onclick="admCancel()">수정 취소</button><button class="submit" id="afSubmit" onclick="admSave()">축제 등록</button></div>
       </div>
       <div class="adm-list" id="admList"></div>
+      <div class="adm-form">
+        <h3 id="apTitle">주차장 등록</h3>
+        <div class="fr"><label>주차장명 *</label><input id="apName" maxlength="30" placeholder="예: 오이도 공영주차장"></div>
+        <div class="fr"><label>구분</label><select id="apType"><option>노외</option><option>노상</option><option>나눔</option></select></div>
+        <div class="fr"><label>안내 문구</label><input id="apNote" maxlength="40" placeholder="예: 무료 / 축제장 도보 5분 (선택)"></div>
+        <div class="fr"><label>위치 선택 *</label><div>
+          <div id="apMap" style="height:260px;border-radius:10px;border:1px solid var(--sky-line);margin:4px 0 2px"></div>
+          <div class="hint" id="apCoord">지도를 클릭해 주차장 위치를 지정하세요.</div>
+        </div></div>
+        <div style="text-align:right"><button class="back" id="apCancel" style="margin:0 12px 0 0;display:none" onclick="apReset()">수정 취소</button><button class="submit" id="apSubmit" onclick="apSave()">주차장 등록</button></div>
+      </div>
+      <div class="adm-list" id="admParkings"></div>
       <div class="adm-form">
         <h3 id="abTitle">부스 직접 등록</h3>
         <div class="fr"><label>축제 *</label><select id="abFest"></select></div>
@@ -424,17 +437,9 @@ const SEEDS = [
 ];
 const FESTIVALS=[]; SEEDS.forEach(s=>FESTIVALS.push({...s}));
 
-/* 공영주차장 예시 데이터 (실서비스: 전국주차장정보표준데이터 연동) */
-const PARKINGS = [
- {name:'시흥시청 공영주차장', type:'노외', lat:37.3802, lng:126.8035, note:'갯골축제 셔틀버스 환승 거점'},
- {name:'장곡동 공영주차장', type:'노외', lat:37.3845, lng:126.7885, note:'갯골생태공원 도보 25분'},
- {name:'연꽃테마파크 공영주차장', type:'노외', lat:37.3972, lng:126.8102, note:'무료 / 주말 혼잡'},
- {name:'하중동 나눔주차장', type:'나눔', lat:37.3941, lng:126.8046, note:'야간·주말 개방'},
- {name:'물왕저수지 공영주차장', type:'노외', lat:37.3748, lng:126.8395, note:''},
- {name:'월곶해양수변공원 주차장', type:'노외', lat:37.3931, lng:126.7418, note:'월곶포구축제 인접'},
- {name:'월곶중앙로 노상주차장', type:'노상', lat:37.3905, lng:126.7448, note:'유료 / 축제 기간 통제 가능'},
- {name:'오이도 공영주차장', type:'노외', lat:37.3462, lng:126.6889, note:'해넘이 행사 시 만차 잦음'},
-];
+/* 공영주차장: 관리자가 등록한 데이터를 DB에서 실시간 로드 */
+let PARKINGS = [];
+
 
 /* 갯골축제 참여 부스 (지자체 인증 예시) */
 const BOOTHS = {gaetgol:[
@@ -581,7 +586,15 @@ function initMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(mapObj);
   refreshFestMarkers();
-  // 공영주차장 레이어
+  refreshParkings();
+  document.getElementById('pkToggle').onchange=e=>{
+    if(!pkLayer)return;
+    e.target.checked?pkLayer.addTo(mapObj):mapObj.removeLayer(pkLayer);
+  };
+}
+function refreshParkings(){
+  if(!mapObj)return;
+  if(pkLayer)mapObj.removeLayer(pkLayer);
   pkLayer=L.layerGroup(PARKINGS.map(p=>{
     const c=p.type==='나눔'?'#2E9E6B':p.type==='노상'?'#E07A2E':'#1B5FAA';
     return L.marker([p.lat,p.lng],{icon:L.divIcon({className:'',iconSize:[18,18],iconAnchor:[9,9],html:
@@ -591,10 +604,9 @@ function initMap(){
       .bindPopup(`<div class="pop"><b>${esc(p.name)}</b>
         <div class="pm">${p.type}주차장${p.note?' · '+esc(p.note):''}</div>
         <div class="row">${nvBtn(p.name,'네이버 지도·로드뷰')}</div></div>`);
-  })).addTo(mapObj);
-  document.getElementById('pkToggle').onchange=e=>{
-    e.target.checked?pkLayer.addTo(mapObj):mapObj.removeLayer(pkLayer);
-  };
+  }));
+  const t=document.getElementById('pkToggle');
+  if(!t||t.checked)pkLayer.addTo(mapObj);
 }
 
 /* ═══════════ 달력 (일자별 칩) ═══════════ */
@@ -925,7 +937,7 @@ auth && auth.onAuthStateChanged(u=>{
   if(u&&!ok){ alert(u.email+' 계정은 관리자로 등록되어 있지 않습니다.'); auth.signOut(); return; }
   if(ok){
     document.getElementById('admWho').textContent=u.email;
-    initAdmMap(); renderAdmList(); subscribeAdmBooths(); abInit(); fillAbFest();
+    initAdmMap(); renderAdmList(); subscribeAdmBooths(); abInit(); fillAbFest(); apInitMap(); renderAdmParkings();
   }
   if(curId&&document.getElementById('v-detail').classList.contains('on'))renderBoard();
 });
@@ -1041,6 +1053,78 @@ function renderAdmList(){
       <button class="back" style="margin:0 0 0 10px" onclick="admEdit('${f.id}')">수정</button>
       <button class="back" style="margin:0 0 0 10px;color:#C24545" onclick="admDelFestival('${f.id}')">삭제</button></span></div>`).join('');
 }
+/* 관리자 주차장 등록·수정 */
+let apMapObj=null, apMarker=null, apLatLng=null, apEditId=null;
+function apInitMap(){
+  if(apMapObj){setTimeout(()=>apMapObj.invalidateSize(),50);return;}
+  apMapObj=L.map('apMap').setView([37.38,126.79],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(apMapObj);
+  apMapObj.on('click',e=>{
+    apLatLng=e.latlng;
+    if(apMarker)apMarker.setLatLng(e.latlng); else apMarker=L.marker(e.latlng).addTo(apMapObj);
+    document.getElementById('apCoord').textContent=`선택된 위치: 위도 ${e.latlng.lat.toFixed(5)}, 경도 ${e.latlng.lng.toFixed(5)}`;
+  });
+  setTimeout(()=>apMapObj.invalidateSize(),50);
+}
+function apReset(){
+  apEditId=null; apLatLng=null;
+  ['apName','apNote'].forEach(i=>document.getElementById(i).value='');
+  if(apMarker&&apMapObj){apMapObj.removeLayer(apMarker);apMarker=null;}
+  document.getElementById('apCoord').textContent='지도를 클릭해 주차장 위치를 지정하세요.';
+  document.getElementById('apTitle').textContent='주차장 등록';
+  document.getElementById('apSubmit').textContent='주차장 등록';
+  document.getElementById('apCancel').style.display='none';
+}
+function apEdit(id){
+  const p=PARKINGS.find(x=>x.id===id); if(!p)return;
+  apInitMap(); apEditId=id;
+  document.getElementById('apName').value=p.name||'';
+  document.getElementById('apType').value=p.type||'노외';
+  document.getElementById('apNote').value=p.note||'';
+  apLatLng={lat:p.lat,lng:p.lng};
+  if(apMarker)apMarker.setLatLng(apLatLng); else apMarker=L.marker(apLatLng).addTo(apMapObj);
+  apMapObj.setView(apLatLng,15);
+  document.getElementById('apCoord').textContent=`선택된 위치: 위도 ${p.lat.toFixed(5)}, 경도 ${p.lng.toFixed(5)}`;
+  document.getElementById('apTitle').textContent='주차장 수정: '+p.name;
+  document.getElementById('apSubmit').textContent='수정 저장';
+  document.getElementById('apCancel').style.display='';
+  document.getElementById('apTitle').scrollIntoView({behavior:'smooth'});
+}
+async function apSave(){
+  const name=document.getElementById('apName').value.trim();
+  const type=document.getElementById('apType').value;
+  const note=document.getElementById('apNote').value.trim();
+  if(!name||!apLatLng){alert('주차장명과 위치(지도 클릭)는 필수입니다.');return;}
+  const data={name,type,note,lat:apLatLng.lat,lng:apLatLng.lng,
+    updatedBy:auth.currentUser?auth.currentUser.email:''};
+  try{
+    if(apEditId){await db.collection('parkings').doc(apEditId).update(data);alert('주차장 정보가 수정되었습니다.');}
+    else{await db.collection('parkings').add(data);alert(`'${name}'이(가) 지도에 등록되었습니다.`);}
+    apReset();
+  }catch(e){alert('저장에 실패했습니다: '+e.message);}
+}
+async function apDel(id,name){
+  if(!confirm(`'${name}'을(를) 지도에서 삭제할까요?`))return;
+  try{await db.collection('parkings').doc(id).delete();}
+  catch(e){alert('삭제에 실패했습니다: '+e.message);}
+}
+function renderAdmParkings(){
+  const el=document.getElementById('admParkings'); if(!el)return;
+  el.innerHTML='<h3 style="font-size:15.5px;color:var(--blue-deep);margin:16px 0 9px">지도에 표시 중인 주차장 '+
+    `<span class="badge b-dday" style="font-size:11px">${PARKINGS.length}</span></h3>`+
+    (PARKINGS.map(p=>{
+      const c=p.type==='나눔'?'#2E9E6B':p.type==='노상'?'#E07A2E':'#1B5FAA';
+      return `<div class="ai"><span><i style="background:${c}"></i><b>${esc(p.name)}</b> · ${p.type}${p.note?' · '+esc(p.note):''}</span>
+      <span><button class="back" style="margin:0" onclick="apEdit('${p.id}')">수정</button>
+      <button class="back" style="margin:0 0 0 10px;color:#C24545" onclick="apDel('${p.id}','${esc(p.name).replace(/'/g,"&#39;")}')">삭제</button></span></div>`;
+    }).join('')||'<div class="empty-note">아직 등록된 주차장이 없습니다. 위에서 축제 인근 주차장을 등록해 보세요.</div>');
+}
+/* 주차장 실시간 로드 (모든 방문자) */
+db && db.collection('parkings').onSnapshot(sn=>{
+  PARKINGS=sn.docs.map(d=>({id:d.id,...d.data()}));
+  refreshParkings(); renderAdmParkings();
+},err=>console.error('주차장 로드 실패:',err));
+
 /* 관리자 부스 등록·수정 */
 let abEditId=null, abPhotosArr=[], abInited=false;
 function abInit(){
