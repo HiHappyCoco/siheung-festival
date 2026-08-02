@@ -209,7 +209,8 @@ footer .ft{max-width:1080px;margin:0 auto;padding:18px 20px;font-size:12.5px;col
   nav{width:100%;margin-left:0}
   nav button{flex:1;padding:8px 4px;font-size:14px}
   .wrap{padding:18px 12px 50px}
-  .hero{padding:18px 16px;min-height:0;aspect-ratio:4/3;max-height:340px;justify-content:flex-start;background-position:right center}
+  .hero{padding:18px 16px;min-height:0;aspect-ratio:4/3;max-height:340px;justify-content:flex-start;
+    background-size:auto 118%;background-position:right top}
   .hero::before{background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.34) 30%,rgba(255,255,255,0) 62%)}
   body.dark .hero::before{background:linear-gradient(180deg,rgba(9,34,56,.82) 0%,rgba(9,34,56,.56) 30%,rgba(9,34,56,.2) 62%,rgba(9,34,56,.06) 100%)}
   .hero-txt{max-width:100%}
@@ -1177,8 +1178,7 @@ function setTheme(dark){
 function toggleTheme(){ setTheme(!document.body.classList.contains('dark')); }
 (function(){
   let saved=null; try{saved=localStorage.getItem('sh-theme');}catch(e){}
-  if(saved==='dark')setTheme(true);
-  else if(saved===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)setTheme(true);
+  setTheme(saved==='dark');   // 저장된 선택이 없으면 라이트 모드가 기본
 })();
 
 /* ═══════════ 시작 ═══════════ */
