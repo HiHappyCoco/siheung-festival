@@ -656,7 +656,7 @@ function renderBoard(){
     <div class="post-form">
       <div class="row">
         <input id="pfNick" placeholder="닉네임" maxlength="10" style="max-width:160px">
-        <input id="pfPw" type="password" placeholder="비밀번호 (삭제 시 필요)" maxlength="20" style="max-width:200px">
+        <input id="pfPw" type="password" placeholder="비밀번호 (삭제 시 필요)" maxlength="20" style="max-width:200px" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
       <textarea id="pfText" placeholder="축제 현장 분위기, 혼잡도, 꿀팁을 공유해 주세요." maxlength="500"></textarea>
       <div style="text-align:right;margin-top:8px"><button class="submit" id="pfBtn" onclick="addPost()">글 남기기</button></div>
@@ -689,7 +689,7 @@ function postHTML(p){
         <button onclick="delCmt('${p.id}',${i})" style="border:0;background:none;font-size:11.5px;color:var(--ink-soft);margin-left:5px;padding:0;cursor:pointer">삭제</button></div>`).join('')}
       <div class="cmt-form">
         <input class="cn" id="cn-${p.id}" placeholder="닉네임" maxlength="10">
-        <input class="cn" id="cp-${p.id}" type="password" placeholder="비밀번호" maxlength="20">
+        <input class="cn" id="cp-${p.id}" type="password" placeholder="비밀번호" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <input class="ct" id="ct-${p.id}" placeholder="댓글 입력" maxlength="200">
         <button onclick="addCmt('${p.id}')">등록</button>
       </div>
